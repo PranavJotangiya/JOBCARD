@@ -1,0 +1,63 @@
+.dash__head {
+  margin-bottom: 1rem;
+}
+.dash__greet {
+  font-size: 1.4rem;
+  font-weight: 800;
+  margin: 0;
+}
+.dash__q {
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+  margin: 0.2rem 0 0;
+}
+
+.dash__stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+.dash__cta {
+  margin-bottom: 1.25rem;
+}
+
+.dash__section {
+  margin-top: 1.5rem;
+}
+.dash__section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 0.65rem;
+}
+.dash__section-head h2 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+.dash__link {
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+.dash__contact-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.dash__greeting-sk {
+  height: 28px;
+  width: 55%;
+  border-radius: 8px;
+  background: var(--color-surface-alt);
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 640px) {
+  .dash__stats {
+    grid-template-columns: repeat(5, 1fr);
+  }
+  .dash__cta {
+    max-width: 22rem;
+  }
+}

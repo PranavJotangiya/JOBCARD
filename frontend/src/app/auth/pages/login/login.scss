@@ -1,0 +1,35 @@
+.login__title {
+  font-size: 1.25rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+.login__notice {
+  background: var(--tone-ready-bg);
+  color: var(--tone-ready-fg);
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 0.75rem;
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+}
+.login__demo {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px dashed var(--color-border-strong);
+  text-align: center;
+}
+.login__demo-label {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+}
+.login__demo-label code {
+  background: var(--color-surface-alt);
+  padding: 0.05rem 0.3rem;
+  border-radius: 4px;
+}
+.login__demo-btns {
+  display: flex;
+  gap: 0.4rem;
+  justify-content: center;
+  margin-top: 0.6rem;
+  flex-wrap: wrap;
+}

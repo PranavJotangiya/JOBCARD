@@ -1,0 +1,67 @@
+<div class="sqe">
+  <div class="sqe__tools">
+    <button type="button" class="btn btn--sm btn--outline" [disabled]="disabled()" (click)="bulkFillEmpty(bulk.value); bulk.value=''">
+      {{ 'jobcard.bulkFill' | t }}
+    </button>
+    <button type="button" class="btn btn--sm btn--outline" [disabled]="disabled()" (click)="fillAll(bulk.value); bulk.value=''">
+      {{ 'jobcard.fillAll' | t }}
+    </button>
+    <button type="button" class="btn btn--sm btn--outline" [disabled]="disabled()" (click)="clearAll()">
+      {{ 'jobcard.clearAll' | t }}
+    </button>
+    <input
+      #bulk
+      class="input sqe__bulk"
+      type="number"
+      inputmode="numeric"
+      min="0"
+      placeholder="Qty"
+      aria-label="Bulk quantity"
+    />
+  </div>
+
+  <ul class="sqe__list">
+    @for (row of rows(); track row.size; let i = $index) {
+      <li class="sqe__row">
+        <span class="sqe__size">{{ row.size }}</span>
+        <input
+          class="input sqe__qty"
+          type="number"
+          inputmode="numeric"
+          min="0"
+          [value]="row.quantity"
+          [disabled]="disabled()"
+          [attr.aria-label]="'Quantity for size ' + row.size"
+          (input)="onQtyInput(i, $any($event.target).value)"
+        />
+        <button
+          type="button"
+          class="sqe__del"
+          [disabled]="disabled()"
+          [attr.aria-label]="'Remove size ' + row.size"
+          (click)="removeSize(i)"
+        >
+          ✕
+        </button>
+      </li>
+    }
+  </ul>
+
+  <div class="sqe__add">
+    <input #newSize class="input" placeholder="Add size (e.g. 22)" aria-label="New size" [disabled]="disabled()" />
+    <button type="button" class="btn btn--sm" [disabled]="disabled()" (click)="addSize(newSize.value); newSize.value=''">
+      + {{ 'action.add' | t }}
+    </button>
+  </div>
+
+  <div class="sqe__totals">
+    <div class="is-calculated">
+      <span class="sqe__totals-label">{{ 'jobcard.totalPcs' | t }}</span>
+      <span class="sqe__totals-value">{{ totalPcs() | number }}</span>
+    </div>
+    <div class="is-calculated">
+      <span class="sqe__totals-label">{{ 'jobcard.average' | t }}</span>
+      <span class="sqe__totals-value">{{ average() | number: '1.0-1' }}</span>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,30 @@
+.jf {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+/* Single column on mobile; two columns only when there is room. */
+.jf__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0 0.9rem;
+}
+
+.jf__spacer {
+  height: calc(var(--tap-target) + var(--safe-bottom) + 1rem);
+}
+
+@media (min-width: 560px) {
+  .jf__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .jf__grid--4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (min-width: 900px) {
+  .jf__grid--4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

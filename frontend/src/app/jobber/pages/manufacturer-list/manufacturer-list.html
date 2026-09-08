@@ -1,0 +1,56 @@
+<app-page-header [title]="'nav.manufacturers' | t">
+  <button actions type="button" class="btn btn--primary btn--sm" (click)="openSheet()">
+    + {{ 'action.add' | t }}
+  </button>
+</app-page-header>
+
+@switch (state()) {
+  @case ('loading') {
+    <app-loading-skeleton [count]="4" />
+  }
+  @case ('error') {
+    <app-empty-state icon="⚠️" [title]="'error.generic' | t">
+      <button type="button" class="btn btn--primary" (click)="load()">{{ 'action.retry' | t }}</button>
+    </app-empty-state>
+  }
+  @case ('empty') {
+    <app-empty-state
+      icon="🏭"
+      [title]="'empty.manufacturers.title' | t"
+      [message]="'empty.manufacturers.body' | t"
+    >
+      <button type="button" class="btn btn--primary" (click)="openSheet()">
+        + {{ 'manufacturer.add' | t }}
+      </button>
+    </app-empty-state>
+  }
+  @case ('ready') {
+    <div class="stack">
+      @for (m of items(); track m.id) {
+        <app-contact-card [name]="m.name" [subtitle]="'Added ' + (m.createdAt | date: 'dd MMM yyyy')" />
+      }
+    </div>
+  }
+}
+
+<app-bottom-sheet [open]="sheetOpen()" [title]="'manufacturer.add' | t" (close)="sheetOpen.set(false)">
+  <form [formGroup]="form" (ngSubmit)="save()" novalidate>
+    <div class="field">
+      <label for="mname">{{ 'manufacturer.name' | t }}</label>
+      <input
+        id="mname"
+        class="input"
+        formControlName="name"
+        placeholder="e.g. Yash Garment"
+        autocomplete="off"
+        [class.is-invalid]="form.controls.name.touched && form.controls.name.invalid"
+      />
+      @if (form.controls.name.touched && form.controls.name.invalid) {
+        <span class="field__error">{{ 'error.required' | t }}</span>
+      }
+    </div>
+    <button type="submit" class="btn btn--primary btn--block btn--lg" [disabled]="saving()">
+      {{ saving() ? ('action.saving' | t) : ('manufacturer.add' | t) }}
+    </button>
+  </form>
+</app-bottom-sheet>

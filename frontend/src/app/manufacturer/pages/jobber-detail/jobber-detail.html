@@ -1,0 +1,39 @@
+@switch (state()) {
+  @case ('loading') {
+    <app-loading-skeleton [count]="3" />
+  }
+  @case ('error') {
+    <app-empty-state icon="⚠️" [title]="'error.generic' | t">
+      <a routerLink="/jobbers" class="btn btn--primary">{{ 'action.back' | t }}</a>
+    </app-empty-state>
+  }
+  @case ('ready') {
+    @if (jobber(); as j) {
+      <app-page-header [title]="j.name" [subtitle]="'jobber.jobCardsFor' | t">
+        <a actions routerLink="/jobbers" class="btn btn--ghost btn--sm">{{ 'action.back' | t }}</a>
+      </app-page-header>
+
+      @if (stats(); as s) {
+        <section class="jd__stats">
+          <app-summary-stat [value]="s.total" [label]="'dash.total' | t" tone="primary" />
+          <app-summary-stat [value]="s.pending" [label]="'dash.pending' | t" />
+          <app-summary-stat [value]="s.inProgress" [label]="'dash.inProgress' | t" tone="progress" />
+          <app-summary-stat [value]="s.completed" [label]="'dash.completed' | t" tone="completed" />
+          <app-summary-stat [value]="s.dispatched" [label]="'dash.dispatched' | t" tone="dispatched" />
+        </section>
+      }
+
+      <h2 class="jd__h">{{ 'nav.jobCards' | t }}</h2>
+      @if (cards().length) {
+        <div class="stack">
+          @for (c of cards(); track c.id) {
+            <app-job-card-card [card]="c" show="jobber" />
+          }
+        </div>
+      } @else {
+        <app-empty-state icon="🗂️" [title]="'empty.jobcards.title' | t" />
+      }
+    }
+  }
+}
+

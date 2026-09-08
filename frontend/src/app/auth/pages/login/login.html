@@ -1,0 +1,52 @@
+<h1 class="login__title">{{ 'auth.signIn' | t }}</h1>
+
+@if (sessionExpired) {
+  <p class="login__notice" role="status">{{ 'auth.sessionExpired' | t }}</p>
+}
+
+<form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+  <div class="field">
+    <label for="username">{{ 'auth.username' | t }}</label>
+    <input
+      id="username"
+      class="input"
+      formControlName="username"
+      autocomplete="username"
+      autocapitalize="none"
+      spellcheck="false"
+      inputmode="text"
+      [class.is-invalid]="form.controls.username.touched && form.controls.username.invalid"
+    />
+  </div>
+
+  <div class="field">
+    <label for="password">{{ 'auth.password' | t }}</label>
+    <input
+      id="password"
+      type="password"
+      class="input"
+      formControlName="password"
+      autocomplete="current-password"
+      [class.is-invalid]="form.controls.password.touched && form.controls.password.invalid"
+    />
+  </div>
+
+  @if (errorMsg()) {
+    <p class="field__error" role="alert">{{ errorMsg() }}</p>
+  }
+
+  <button type="submit" class="btn btn--primary btn--block btn--lg" [disabled]="submitting()">
+    {{ submitting() ? ('auth.signingIn' | t) : ('auth.signIn' | t) }}
+  </button>
+</form>
+
+@if (showDemo) {
+  <div class="login__demo">
+    <span class="login__demo-label">Demo accounts (run <code>npm run seed</code>):</span>
+    <div class="login__demo-btns">
+      <button type="button" class="btn btn--sm btn--outline" (click)="fillDemo('yash')">Manufacturer</button>
+      <button type="button" class="btn btn--sm btn--outline" (click)="fillDemo('abc')">Jobber</button>
+      <button type="button" class="btn btn--sm btn--outline" (click)="fillDemo('admin')">Admin</button>
+    </div>
+  </div>
+}

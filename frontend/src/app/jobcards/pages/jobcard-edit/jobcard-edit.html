@@ -1,0 +1,26 @@
+@switch (state()) {
+  @case ('loading') {
+    <app-loading-skeleton [count]="2" />
+  }
+  @case ('error') {
+    <app-empty-state icon="⚠️" [title]="'error.generic' | t">
+      <a routerLink="/jobcards" class="btn btn--primary">{{ 'action.back' | t }}</a>
+    </app-empty-state>
+  }
+  @case ('ready') {
+    @if (jobCard(); as jc) {
+      <app-page-header [title]="'action.edit' | t" [subtitle]="jc.jobCardNumber">
+        <a actions [routerLink]="['/jobcards', jc.id]" class="btn btn--ghost btn--sm">
+          {{ 'action.cancel' | t }}
+        </a>
+      </app-page-header>
+      <app-jobcard-form
+        mode="edit"
+        [initial]="jc"
+        [submitting]="submitting()"
+        (save)="onSave($event)"
+        (formCancel)="cancel()"
+      />
+    }
+  }
+}

@@ -1,0 +1,48 @@
+<app-page-header [title]="'jobcard.new' | t" />
+
+@switch (state()) {
+  @case ('loading') {
+    <app-loading-skeleton [count]="2" />
+  }
+  @case ('error') {
+    <app-empty-state icon="⚠️" [title]="'error.generic' | t">
+      <a routerLink="/jobcards" class="btn btn--primary">{{ 'action.back' | t }}</a>
+    </app-empty-state>
+  }
+  @case ('no-manufacturers') {
+    <app-empty-state
+      icon="🏭"
+      [title]="'empty.manufacturers.title' | t"
+      [message]="'empty.manufacturers.body' | t"
+    >
+      <a routerLink="/manufacturers" class="btn btn--primary">+ {{ 'manufacturer.add' | t }}</a>
+    </app-empty-state>
+  }
+  @case ('ready') {
+    <div class="field jc-create__pick">
+      <label for="manu">{{ 'jobcard.manufacturer' | t }} <span class="req">*</span></label>
+      <select
+        id="manu"
+        class="select"
+        [value]="selectedId()"
+        (change)="onSelect($any($event.target).value)"
+      >
+        <option value="" disabled>{{ 'jobcard.selectManufacturer' | t }}</option>
+        @for (m of options(); track m.id) {
+          <option [value]="m.id">{{ m.name }}</option>
+        }
+      </select>
+    </div>
+
+    @if (selectedId()) {
+      <app-jobcard-form
+        mode="create"
+        [submitting]="submitting()"
+        (save)="onSave($event)"
+        (formCancel)="cancel()"
+      />
+    } @else {
+      <p class="muted text-sm">{{ 'jobcard.selectManufacturer' | t }} to continue.</p>
+    }
+  }
+}

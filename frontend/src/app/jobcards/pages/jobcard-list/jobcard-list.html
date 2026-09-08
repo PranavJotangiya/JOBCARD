@@ -1,0 +1,59 @@
+<app-page-header [title]="'jobcard.list' | t">
+  @if (canCreate()) {
+    <a actions routerLink="/jobcards/new" class="btn btn--primary btn--sm">
+      + {{ 'jobcard.new' | t }}
+    </a>
+  }
+</app-page-header>
+
+<div class="jl__filters">
+  <app-search-bar
+    [placeholder]="'jobcard.searchPlaceholder' | t"
+    [value]="search()"
+    (search)="onSearch($event)"
+  />
+  <app-filter-chips [chips]="chips()" [active]="bucket()" (select)="onBucket($event)" />
+</div>
+
+@switch (state()) {
+  @case ('loading') {
+    <app-loading-skeleton [count]="5" />
+  }
+  @case ('error') {
+    <app-empty-state icon="⚠️" [title]="'error.generic' | t" [message]="errorMsg()">
+      <button type="button" class="btn btn--primary" (click)="retry()">{{ 'action.retry' | t }}</button>
+    </app-empty-state>
+  }
+  @case ('empty') {
+    <app-empty-state
+      icon="🗂️"
+      [title]="'empty.jobcards.title' | t"
+      [message]="'empty.jobcards.body' | t"
+    >
+      @if (canCreate()) {
+        <a routerLink="/jobcards/new" class="btn btn--primary">+ {{ 'jobcard.new' | t }}</a>
+      }
+    </app-empty-state>
+  }
+  @case ('ready') {
+    <div class="stack">
+      @for (jc of cards(); track jc.id) {
+        <app-job-card-card [card]="jc" [viewerRole]="viewerRole()" />
+      }
+    </div>
+
+    @if (pagination(); as p) {
+      @if (p.totalPages > 1) {
+        <nav class="jl__pager" aria-label="Pagination">
+          <button type="button" class="btn btn--ghost btn--sm" [disabled]="!p.hasPrevPage" (click)="prevPage()">
+            ‹ Prev
+          </button>
+          <span>{{ p.page }} / {{ p.totalPages }}</span>
+          <button type="button" class="btn btn--ghost btn--sm" [disabled]="!p.hasNextPage" (click)="nextPage()">
+            Next ›
+          </button>
+        </nav>
+      }
+    }
+  }
+}

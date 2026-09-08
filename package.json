@@ -1,0 +1,30 @@
+{
+  "name": "jobcard",
+  "version": "0.1.0",
+  "private": true,
+  "description": "JOBCARD — mobile-first garment job-work management for Manufacturers and Jobbers",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "dev": "concurrently -n API,WEB -c cyan,magenta \"npm:dev:backend\" \"npm:dev:frontend\"",
+    "dev:backend": "npm --workspace backend run dev",
+    "dev:frontend": "npm --workspace frontend start",
+    "build": "npm run build:backend && npm run build:frontend",
+    "build:backend": "npm --workspace backend run build",
+    "build:frontend": "npm --workspace frontend run build",
+    "test": "npm --workspace backend test",
+    "lint": "npm --workspace backend run lint && npm --workspace frontend run lint",
+    "typecheck": "npm --workspace backend run typecheck && npm --workspace frontend run typecheck",
+    "seed": "npm --workspace backend run seed",
+    "format": "prettier --write \"**/*.{ts,js,json,md,html,scss}\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0",
+    "prettier": "^3.4.2"
+  }
+}

@@ -1,0 +1,105 @@
+@switch (state()) {
+  @case ('loading') {
+    <div class="dash__greeting-sk"></div>
+    <app-loading-skeleton [count]="3" />
+  }
+
+  @case ('error') {
+    <app-empty-state icon="⚠️" [title]="'error.generic' | t" [message]="errorMsg()">
+      <button type="button" class="btn btn--primary" (click)="load()">{{ 'action.retry' | t }}</button>
+    </app-empty-state>
+  }
+
+  @case ('ready') {
+    @if (data(); as d) {
+      <header class="dash__head">
+        <h1 class="dash__greet">{{ 'dash.greeting' | t: { name: d.greetingName } }}</h1>
+        <p class="dash__q">
+          {{ (isManufacturer() ? 'dash.manufacturerQuestion' : 'dash.jobberQuestion') | t }}
+        </p>
+      </header>
+
+      <!-- Summary -->
+      <section class="dash__stats" aria-label="Summary">
+        <app-summary-stat [value]="d.summary.total" [label]="'dash.total' | t" tone="primary" />
+        <app-summary-stat [value]="d.summary.pending" [label]="'dash.pending' | t" />
+        <app-summary-stat [value]="d.summary.inProgress" [label]="'dash.inProgress' | t" tone="progress" />
+        <app-summary-stat [value]="d.summary.completed" [label]="'dash.completed' | t" tone="completed" />
+        <app-summary-stat [value]="d.summary.dispatched" [label]="'dash.dispatched' | t" tone="dispatched" />
+      </section>
+
+      @if (isJobber()) {
+        <a routerLink="/jobcards/new" class="btn btn--primary btn--block btn--lg dash__cta">
+          {{ 'dash.newJobCard' | t }}
+        </a>
+      }
+
+      <!-- Jobber: work by Manufacturer -->
+      @if (isJobber() && d.manufacturers?.length) {
+        <section class="dash__section">
+          <div class="dash__section-head">
+            <h2>{{ 'dash.myManufacturers' | t }}</h2>
+            <a routerLink="/manufacturers" class="dash__link">{{ 'dash.viewAll' | t }}</a>
+          </div>
+          <div class="stack">
+            @for (m of d.manufacturers; track m.id) {
+              <app-contact-card [name]="m.name" [stats]="m.stats" />
+            }
+          </div>
+        </section>
+      }
+
+      <!-- Manufacturer: work by Jobber -->
+      @if (isManufacturer() && d.jobbers?.length) {
+        <section class="dash__section">
+          <div class="dash__section-head">
+            <h2>{{ 'dash.myJobbers' | t }}</h2>
+            <a routerLink="/jobbers" class="dash__link">{{ 'dash.viewAll' | t }}</a>
+          </div>
+          <div class="stack">
+            @for (j of d.jobbers; track j.id) {
+              <a class="dash__contact-link" [routerLink]="['/jobbers', j.id]">
+                <app-contact-card [name]="j.name" [stats]="j.stats" [tappable]="true" />
+              </a>
+            }
+          </div>
+        </section>
+      }
+
+      <!-- Recent job cards -->
+      @if (d.recent?.length) {
+        <section class="dash__section">
+          <div class="dash__section-head">
+            <h2>{{ 'dash.recent' | t }}</h2>
+            <a routerLink="/jobcards" class="dash__link">{{ 'dash.viewAll' | t }}</a>
+          </div>
+          <div class="stack">
+            @for (jc of d.recent; track jc.id) {
+              <app-job-card-card [card]="jc" [viewerRole]="role()" />
+            }
+          </div>
+        </section>
+      } @else if (!d.manufacturers?.length && !d.jobbers?.length) {
+        @if (isJobber()) {
+          <app-empty-state
+            icon="🗂️"
+            [title]="'empty.jobcards.title' | t"
+            [message]="'empty.jobcards.body' | t"
+          >
+            <a routerLink="/jobcards/new" class="btn btn--primary">{{ 'dash.newJobCard' | t }}</a>
+          </app-empty-state>
+        } @else if (isManufacturer()) {
+          <app-empty-state
+            icon="👷"
+            [title]="'empty.jobbers.title' | t"
+            [message]="'empty.jobbers.body' | t"
+          >
+            <a routerLink="/jobbers" class="btn btn--primary">{{ 'jobber.add' | t }}</a>
+          </app-empty-state>
+        } @else {
+          <app-empty-state icon="📊" [title]="'empty.generic.title' | t" />
+        }
+      }
+    }
+  }
+}

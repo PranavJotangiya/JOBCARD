@@ -1,0 +1,27 @@
+.jl__filters {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+  position: sticky;
+  top: calc(var(--header-h) + var(--safe-top));
+  background: var(--color-bg);
+  padding-bottom: 0.4rem;
+  z-index: 10;
+}
+
+.jl__pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.25rem;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+}
+
+@media (min-width: 1024px) {
+  .jl__filters {
+    top: 0;
+  }
+}

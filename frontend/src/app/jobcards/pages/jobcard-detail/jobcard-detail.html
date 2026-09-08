@@ -1,0 +1,130 @@
+@switch (state()) {
+  @case ('loading') {
+    <app-loading-skeleton [count]="4" />
+  }
+  @case ('error') {
+    <app-empty-state icon="⚠️" [title]="'error.generic' | t" [message]="errorMsg()">
+      <button type="button" class="btn btn--ghost" (click)="retry()">{{ 'action.retry' | t }}</button>
+      <a routerLink="/jobcards" class="btn btn--primary">{{ 'action.back' | t }}</a>
+    </app-empty-state>
+  }
+  @case ('ready') {
+    @if (jobCard(); as jc) {
+      <header class="jd__head">
+        <a routerLink="/jobcards" class="jd__back" aria-label="Back to Job Cards">← {{ 'nav.jobCards' | t }}</a>
+        <div class="jd__title-row">
+          <h1 class="jd__num">{{ jc.jobCardNumber }}</h1>
+          <div class="jd__badges">
+            <app-status-badge [work]="jc.workStatus" />
+            <app-status-badge [dispatch]="jc.dispatchStatus" />
+          </div>
+        </div>
+        <div class="jd__parties">
+          <span><strong>{{ jc.manufacturer.name }}</strong> ({{ 'jobcard.manufacturer' | t }})</span>
+          <span>{{ jc.jobber.name }} ({{ 'jobcard.jobber' | t }})</span>
+        </div>
+        <div class="jd__toolbar">
+          <button type="button" class="btn btn--sm btn--outline" (click)="share()">
+            🔗 {{ 'action.share' | t }}
+          </button>
+          <button type="button" class="btn btn--sm btn--outline" [disabled]="pdfBusy()" (click)="openPdf()">
+            {{ pdfBusy() ? ('action.loading' | t) : '📄 ' + ('action.pdf' | t) }}
+          </button>
+          @if (isJobber()) {
+            <a [routerLink]="['/jobcards', jc.id, 'edit']" class="btn btn--sm btn--outline">
+              ✏️ {{ 'action.edit' | t }}
+            </a>
+            <button type="button" class="btn btn--sm btn--danger" (click)="remove()">
+              🗑️ {{ 'action.delete' | t }}
+            </button>
+          }
+        </div>
+        @if (readOnly()) {
+          <p class="jd__readonly" role="note">👁️ {{ 'jobcard.readOnly' | t }}</p>
+        }
+      </header>
+
+      <div class="stack">
+        <app-section-card [title]="'jobcard.section.details' | t" icon="📋" [collapsible]="true">
+          <dl class="kv">
+            <div><dt>{{ 'jobcard.date' | t }}</dt><dd>{{ jc.jobCardDate | date: 'dd MMM yyyy' }}</dd></div>
+            <div><dt>{{ 'jobcard.shortNumber' | t }}</dt><dd>{{ jc.shortNumber || '—' }}</dd></div>
+            <div><dt>{{ 'jobcard.shortName' | t }}</dt><dd>{{ jc.shortName || '—' }}</dd></div>
+            <div><dt>{{ 'jobcard.programDate' | t }}</dt><dd>{{ jc.programDate ? (jc.programDate | date: 'dd MMM yyyy') : '—' }}</dd></div>
+            <div><dt>{{ 'jobcard.cuttingDate' | t }}</dt><dd>{{ jc.cuttingDate ? (jc.cuttingDate | date: 'dd MMM yyyy') : '—' }}</dd></div>
+          </dl>
+        </app-section-card>
+
+        <app-section-card [title]="'jobcard.section.fabric' | t" icon="🧵" [collapsible]="true">
+          <dl class="kv">
+            <div><dt>{{ 'jobcard.fabricType' | t }}</dt><dd>{{ jc.fabric.fabricType || '—' }}</dd></div>
+            <div><dt>{{ 'jobcard.color' | t }}</dt><dd>{{ jc.fabric.color || '—' }}</dd></div>
+            <div class="kv__wide"><dt>{{ 'jobcard.fabricDescription' | t }}</dt><dd>{{ jc.fabric.description || '—' }}</dd></div>
+            <div><dt>{{ 'jobcard.pana' | t }}</dt><dd>{{ jc.fabric.pana ?? '—' }}</dd></div>
+            <div><dt>{{ 'jobcard.mtr' | t }}</dt><dd>{{ jc.fabric.mtr ?? '—' }}</dd></div>
+            <div><dt>{{ 'jobcard.average' | t }}</dt><dd>{{ jc.fabric.average ?? '—' }}</dd></div>
+            <div><dt>{{ 'jobcard.pcs' | t }}</dt><dd>{{ jc.fabric.pcs ?? '—' }}</dd></div>
+          </dl>
+        </app-section-card>
+
+        <app-section-card [title]="'jobcard.section.sizes' | t" icon="📏" [collapsible]="true">
+          @if (jc.sizes.length) {
+            <div class="jd__sizes">
+              @for (s of jc.sizes; track s.size) {
+                <div class="jd__size"><span>{{ s.size }}</span><strong>{{ s.quantity }}</strong></div>
+              }
+            </div>
+            <p class="jd__total">{{ 'jobcard.totalPcs' | t }}: <strong>{{ jc.totals.pieces }}</strong></p>
+          } @else {
+            <p class="muted text-sm">—</p>
+          }
+        </app-section-card>
+
+        <app-section-card [title]="'jobcard.section.bales' | t" icon="🧶" [collapsible]="true">
+          @if (jc.bales.length) {
+            <ul class="jd__bales">
+              @for (b of jc.bales; track b.label) {
+                <li><span>{{ b.label }}</span><strong>{{ b.meters }} m</strong></li>
+              }
+            </ul>
+            <p class="jd__total">
+              {{ 'jobcard.baleCount' | t }}: <strong>{{ jc.totals.baleCount }}</strong> ·
+              {{ 'jobcard.baleMtr' | t }}: <strong>{{ jc.totals.baleMtr }}</strong>
+            </p>
+          } @else {
+            <p class="muted text-sm">—</p>
+          }
+        </app-section-card>
+
+        <app-section-card [title]="'jobcard.section.cutting' | t" icon="✂️" [collapsible]="true">
+          <dl class="kv">
+            <div><dt>{{ 'jobcard.pattern' | t }}</dt><dd>{{ jc.cutting.pattern || '—' }}</dd></div>
+            <div><dt>{{ 'jobcard.markerLength' | t }}</dt><dd>{{ jc.cutting.markerLength ?? '—' }}</dd></div>
+            <div><dt>{{ 'jobcard.markerWidth' | t }}</dt><dd>{{ jc.cutting.markerWidth ?? '—' }}</dd></div>
+            <div><dt>{{ 'jobcard.layLength' | t }}</dt><dd>{{ jc.cutting.layLength ?? '—' }}</dd></div>
+            <div><dt>{{ 'jobcard.layers' | t }}</dt><dd>{{ jc.cutting.layers ?? '—' }}</dd></div>
+            <div><dt>{{ 'jobcard.plies' | t }}</dt><dd>{{ jc.cutting.plies ?? '—' }}</dd></div>
+          </dl>
+          @if (jc.cutting.patternImageUrl) {
+            <img class="jd__pattern" [src]="jc.cutting.patternImageUrl" alt="Pattern image" />
+          }
+        </app-section-card>
+
+        <app-section-card [title]="'jobcard.section.notes' | t" icon="📝" [collapsible]="true">
+          <p class="jd__notes">{{ jc.notes || '—' }}</p>
+        </app-section-card>
+
+        <app-section-card [title]="'jobcard.section.activity' | t" icon="🕓" [collapsible]="true">
+          <app-activity-timeline [entries]="activity()" />
+        </app-section-card>
+      </div>
+
+      @if (isJobber()) {
+        <div class="jd__spacer"></div>
+        <app-sticky-action-bar>
+          <app-status-actions [jobCard]="jc" (changed)="onStatusChanged($event)" />
+        </app-sticky-action-bar>
+      }
+    }
+  }
+}

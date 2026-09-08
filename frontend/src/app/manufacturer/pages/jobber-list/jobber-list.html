@@ -1,0 +1,55 @@
+<app-page-header [title]="'nav.jobbers' | t">
+  <button actions type="button" class="btn btn--primary btn--sm" (click)="openSheet()">
+    + {{ 'action.add' | t }}
+  </button>
+</app-page-header>
+
+@switch (state()) {
+  @case ('loading') {
+    <app-loading-skeleton [count]="4" />
+  }
+  @case ('error') {
+    <app-empty-state icon="⚠️" [title]="'error.generic' | t">
+      <button type="button" class="btn btn--primary" (click)="load()">{{ 'action.retry' | t }}</button>
+    </app-empty-state>
+  }
+  @case ('empty') {
+    <app-empty-state icon="👷" [title]="'empty.jobbers.title' | t" [message]="'empty.jobbers.body' | t">
+      <button type="button" class="btn btn--primary" (click)="openSheet()">
+        + {{ 'jobber.add' | t }}
+      </button>
+    </app-empty-state>
+  }
+  @case ('ready') {
+    <div class="stack">
+      @for (j of items(); track j.id) {
+        <a class="jl-link" [routerLink]="['/jobbers', j.id]">
+          <app-contact-card [name]="j.name" [tappable]="true" />
+        </a>
+      }
+    </div>
+  }
+}
+
+<app-bottom-sheet [open]="sheetOpen()" [title]="'jobber.add' | t" (close)="sheetOpen.set(false)">
+  <form [formGroup]="form" (ngSubmit)="save()" novalidate>
+    <div class="field">
+      <label for="jname">{{ 'jobber.name' | t }}</label>
+      <input
+        id="jname"
+        class="input"
+        formControlName="name"
+        placeholder="e.g. ABC Jeans Workshop"
+        autocomplete="off"
+        [class.is-invalid]="form.controls.name.touched && form.controls.name.invalid"
+      />
+      @if (form.controls.name.touched && form.controls.name.invalid) {
+        <span class="field__error">{{ 'error.required' | t }}</span>
+      }
+    </div>
+    <button type="submit" class="btn btn--primary btn--block btn--lg" [disabled]="saving()">
+      {{ saving() ? ('action.saving' | t) : ('jobber.add' | t) }}
+    </button>
+  </form>
+</app-bottom-sheet>
+

@@ -1,0 +1,96 @@
+.sqe__tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.75rem;
+  align-items: center;
+}
+.sqe__bulk {
+  width: 5.5rem;
+  min-height: 40px;
+}
+
+.sqe__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Mobile: large touch rows */
+.sqe__row {
+  display: grid;
+  grid-template-columns: 3.5rem 1fr 44px;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.35rem 0.5rem;
+  background: var(--color-surface-alt);
+  border-radius: var(--radius-sm);
+  min-height: 56px;
+}
+.sqe__size {
+  font-weight: 800;
+  font-size: 1.05rem;
+  text-align: center;
+}
+.sqe__qty {
+  min-height: 48px;
+  text-align: right;
+  font-weight: 700;
+}
+.sqe__del {
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--color-surface);
+  color: var(--color-text-faint);
+  cursor: pointer;
+}
+
+.sqe__add {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 0.75rem;
+}
+.sqe__add .input {
+  min-height: 44px;
+}
+
+.sqe__totals {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+  margin-top: 0.9rem;
+}
+.sqe__totals .is-calculated {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: var(--radius-sm);
+}
+.sqe__totals-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.sqe__totals-value {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--color-text);
+}
+
+/* Tablet+: compact grid */
+@media (min-width: 768px) {
+  .sqe__list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem 0.75rem;
+  }
+  .sqe__row {
+    min-height: 52px;
+  }
+}

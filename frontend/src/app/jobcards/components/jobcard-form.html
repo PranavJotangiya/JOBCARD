@@ -1,0 +1,141 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate class="jf">
+  <!-- Details -->
+  <app-section-card [title]="'jobcard.section.details' | t" icon="📋">
+    <div class="field">
+      <label for="jcDate">{{ 'jobcard.date' | t }}</label>
+      <input id="jcDate" type="date" class="input" formControlName="jobCardDate" />
+    </div>
+    <div class="jf__grid">
+      <div class="field">
+        <label for="shortNumber">{{ 'jobcard.shortNumber' | t }}</label>
+        <input id="shortNumber" class="input" formControlName="shortNumber" autocomplete="off" />
+      </div>
+      <div class="field">
+        <label for="shortName">{{ 'jobcard.shortName' | t }}</label>
+        <input id="shortName" class="input" formControlName="shortName" autocomplete="off" />
+      </div>
+      <div class="field">
+        <label for="programDate">{{ 'jobcard.programDate' | t }}</label>
+        <input id="programDate" type="date" class="input" formControlName="programDate" />
+      </div>
+      <div class="field">
+        <label for="cuttingDate">{{ 'jobcard.cuttingDate' | t }}</label>
+        <input id="cuttingDate" type="date" class="input" formControlName="cuttingDate" />
+      </div>
+    </div>
+  </app-section-card>
+
+  <!-- Fabric -->
+  <app-section-card [title]="'jobcard.section.fabric' | t" icon="🧵">
+   <div formGroupName="fabric">
+    <div class="jf__grid">
+      <div class="field">
+        <label for="fabricType">{{ 'jobcard.fabricType' | t }}</label>
+        <input id="fabricType" class="input" formControlName="fabricType" autocomplete="off" />
+      </div>
+      <div class="field">
+        <label for="color">{{ 'jobcard.color' | t }}</label>
+        <input id="color" class="input" formControlName="color" autocomplete="off" />
+      </div>
+    </div>
+    <div class="field">
+      <label for="fabricDescription">{{ 'jobcard.fabricDescription' | t }}</label>
+      <textarea id="fabricDescription" class="textarea" rows="2" formControlName="description"></textarea>
+    </div>
+    <div class="jf__grid jf__grid--4">
+      <div class="field">
+        <label for="pana">{{ 'jobcard.pana' | t }}</label>
+        <input id="pana" class="input" type="number" inputmode="decimal" min="0" formControlName="pana" />
+      </div>
+      <div class="field">
+        <label for="mtr">{{ 'jobcard.mtr' | t }}</label>
+        <input id="mtr" class="input" type="number" inputmode="decimal" min="0" formControlName="mtr" />
+      </div>
+      <div class="field">
+        <label for="average">{{ 'jobcard.average' | t }}</label>
+        <input id="average" class="input" type="number" inputmode="decimal" min="0" formControlName="average" />
+      </div>
+      <div class="field">
+        <label for="pcs">{{ 'jobcard.pcs' | t }}</label>
+        <input id="pcs" class="input" type="number" inputmode="numeric" min="0" formControlName="pcs" />
+      </div>
+    </div>
+    <p class="field__hint">Average and PCS auto-fill from MTR when left blank.</p>
+   </div>
+  </app-section-card>
+
+  <!-- Sizes -->
+  <app-section-card [title]="'jobcard.section.sizes' | t" icon="📏">
+    <app-size-quantity-editor [(value)]="sizes" [disabled]="submitting()" />
+  </app-section-card>
+
+  <!-- Bales -->
+  <app-section-card [title]="'jobcard.section.bales' | t" icon="🧶">
+    <app-bale-editor [(value)]="bales" [disabled]="submitting()" />
+  </app-section-card>
+
+  <!-- Cutting -->
+  <app-section-card [title]="'jobcard.section.cutting' | t" icon="✂️">
+   <div formGroupName="cutting">
+    <div class="field">
+      <label for="pattern">{{ 'jobcard.pattern' | t }}</label>
+      <input id="pattern" class="input" formControlName="pattern" autocomplete="off" />
+    </div>
+    <div class="jf__grid">
+      <div class="field">
+        <label for="markerLength">{{ 'jobcard.markerLength' | t }}</label>
+        <input id="markerLength" class="input" type="number" inputmode="decimal" min="0" formControlName="markerLength" />
+      </div>
+      <div class="field">
+        <label for="markerWidth">{{ 'jobcard.markerWidth' | t }}</label>
+        <input id="markerWidth" class="input" type="number" inputmode="decimal" min="0" formControlName="markerWidth" />
+      </div>
+      <div class="field">
+        <label for="layLength">{{ 'jobcard.layLength' | t }}</label>
+        <input id="layLength" class="input" type="number" inputmode="decimal" min="0" formControlName="layLength" />
+      </div>
+      <div class="field">
+        <label for="layers">{{ 'jobcard.layers' | t }}</label>
+        <input id="layers" class="input" type="number" inputmode="numeric" min="0" formControlName="layers" />
+      </div>
+      <div class="field">
+        <label for="plies">{{ 'jobcard.plies' | t }}</label>
+        <input id="plies" class="input" type="number" inputmode="numeric" min="0" formControlName="plies" />
+      </div>
+    </div>
+   </div>
+  </app-section-card>
+
+  <app-section-card [title]="'jobcard.patternImage' | t" icon="🖼️">
+    <app-pattern-image-upload
+      [(fileId)]="patternFileId"
+      [existingUrl]="existingPatternUrl()"
+      [disabled]="submitting()"
+    />
+  </app-section-card>
+
+  <!-- Notes -->
+  <app-section-card [title]="'jobcard.section.notes' | t" icon="📝">
+    <div class="field">
+      <label for="notes" class="visually-hidden">{{ 'jobcard.section.notes' | t }}</label>
+      <textarea
+        id="notes"
+        class="textarea"
+        rows="3"
+        formControlName="notes"
+        [placeholder]="'jobcard.notesPlaceholder' | t"
+      ></textarea>
+    </div>
+  </app-section-card>
+
+  <div class="jf__spacer"></div>
+
+  <app-sticky-action-bar>
+    <button type="button" class="btn btn--ghost" [disabled]="submitting()" (click)="formCancel.emit()">
+      {{ 'action.cancel' | t }}
+    </button>
+    <button type="submit" class="btn btn--primary" [disabled]="submitting()">
+      {{ submitting() ? ('action.saving' | t) : ('jobcard.save' | t) }}
+    </button>
+  </app-sticky-action-bar>
+</form>

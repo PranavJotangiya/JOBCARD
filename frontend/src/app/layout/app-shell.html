@@ -1,0 +1,91 @@
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div class="shell">
+  <!-- Progress bar -->
+  <div class="shell__progress" [class.is-active]="loading.isLoading()" role="progressbar" aria-hidden="true"></div>
+
+  <!-- Desktop / tablet sidebar -->
+  <aside class="shell__sidebar" aria-label="Primary">
+    <div class="shell__brand">JOBCARD</div>
+    <nav class="sidenav">
+      @for (item of primaryNav(); track item.path) {
+        <a
+          class="sidenav__link"
+          [routerLink]="item.path"
+          routerLinkActive="is-active"
+          [routerLinkActiveOptions]="{ exact: item.path === '/' }"
+        >
+          <span class="sidenav__icon" aria-hidden="true">{{ item.icon }}</span>
+          <span>{{ item.labelKey | t }}</span>
+        </a>
+      }
+      @for (item of moreNav; track item.path) {
+        <a class="sidenav__link" [routerLink]="item.path" routerLinkActive="is-active">
+          <span class="sidenav__icon" aria-hidden="true">{{ item.icon }}</span>
+          <span>{{ item.labelKey | t }}</span>
+        </a>
+      }
+      <button type="button" class="sidenav__link sidenav__link--btn" (click)="logout()">
+        <span class="sidenav__icon" aria-hidden="true">🚪</span>
+        <span>{{ 'nav.logout' | t }}</span>
+      </button>
+    </nav>
+  </aside>
+
+  <!-- Mobile top header -->
+  <header class="shell__header">
+    <span class="shell__title">JOBCARD</span>
+    @if (user(); as u) {
+      <span class="shell__who">
+        <span class="shell__avatar" aria-hidden="true">{{ u.name.charAt(0).toUpperCase() }}</span>
+      </span>
+    }
+  </header>
+
+  <!-- Routed content -->
+  <main class="shell__main" id="main" tabindex="-1">
+    <div class="shell__content">
+      <router-outlet />
+    </div>
+  </main>
+
+  <!-- Mobile bottom navigation (max 4 items) -->
+  <nav class="botnav" aria-label="Primary">
+    @for (item of primaryNav(); track item.path) {
+      <a
+        class="botnav__link"
+        [routerLink]="item.path"
+        routerLinkActive="is-active"
+        [routerLinkActiveOptions]="{ exact: item.path === '/' }"
+      >
+        <span class="botnav__icon" aria-hidden="true">{{ item.icon }}</span>
+        <span class="botnav__label">{{ item.labelKey | t }}</span>
+      </a>
+    }
+    <button type="button" class="botnav__link" (click)="openMore()" [class.is-active]="moreOpen()">
+      <span class="botnav__icon" aria-hidden="true">☰</span>
+      <span class="botnav__label">{{ 'nav.more' | t }}</span>
+    </button>
+  </nav>
+</div>
+
+<!-- More sheet -->
+<app-bottom-sheet [open]="moreOpen()" [title]="'nav.more' | t" (close)="closeMore()">
+  <div class="more">
+    @for (item of moreNav; track item.path) {
+      <button type="button" class="more__item" (click)="goAndClose(item.path)">
+        <span aria-hidden="true">{{ item.icon }}</span>
+        <span>{{ item.labelKey | t }}</span>
+      </button>
+    }
+    <button type="button" class="more__item" (click)="goAndClose('/settings')">
+      <span aria-hidden="true">👤</span><span>{{ 'nav.profile' | t }}</span>
+    </button>
+    <button type="button" class="more__item more__item--danger" (click)="logout()">
+      <span aria-hidden="true">🚪</span><span>{{ 'nav.logout' | t }}</span>
+    </button>
+  </div>
+</app-bottom-sheet>
+
+<app-toasts />
+<app-confirm-dialog />

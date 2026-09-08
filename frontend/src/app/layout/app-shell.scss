@@ -1,0 +1,210 @@
+:host {
+  --sidebar-w: 0px;
+  display: block;
+}
+
+.shell {
+  min-height: 100dvh;
+}
+
+.shell__progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 0;
+  background: var(--color-primary);
+  z-index: 1400;
+  transition: width 0.3s ease, opacity 0.3s ease;
+  opacity: 0;
+}
+.shell__progress.is-active {
+  width: 85%;
+  opacity: 1;
+}
+
+/* ---- Mobile header --------------------------------------------------- */
+.shell__header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  height: calc(var(--header-h) + var(--safe-top));
+  padding: var(--safe-top) 1rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+.shell__title {
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  font-size: 1.05rem;
+}
+.shell__avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--color-primary-soft);
+  color: var(--color-primary-strong);
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 0.85rem;
+}
+
+/* ---- Content ------------------------------------------------------- */
+.shell__main {
+  outline: none;
+}
+.shell__content {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 1rem 1rem calc(var(--bottom-nav-h) + var(--safe-bottom) + 1.25rem);
+}
+
+/* ---- Bottom navigation (mobile) ---------------------------------------- */
+.botnav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 35;
+  height: calc(var(--bottom-nav-h) + var(--safe-bottom));
+  padding-bottom: var(--safe-bottom);
+  display: flex;
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+}
+.botnav__link {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  border: 0;
+  background: transparent;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  font: inherit;
+  cursor: pointer;
+  min-height: 44px;
+}
+.botnav__icon {
+  font-size: 1.15rem;
+  line-height: 1;
+}
+.botnav__label {
+  font-size: 0.68rem;
+  font-weight: 600;
+}
+.botnav__link.is-active {
+  color: var(--color-primary-strong);
+}
+
+/* ---- Sidebar (desktop) --------------------------------------------- */
+.shell__sidebar {
+  display: none;
+}
+.shell__brand {
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  padding: 1.25rem 1rem;
+  font-size: 1.1rem;
+}
+.sidenav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0 0.6rem;
+}
+.sidenav__link {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-height: 46px;
+  padding: 0 0.75rem;
+  border-radius: var(--radius-sm);
+  border: 0;
+  background: transparent;
+  color: var(--color-text);
+  text-decoration: none;
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.92rem;
+  cursor: pointer;
+  text-align: left;
+}
+.sidenav__link:hover {
+  background: var(--color-surface-alt);
+}
+.sidenav__link.is-active {
+  background: var(--color-primary-soft);
+  color: var(--color-primary-strong);
+}
+.sidenav__link--btn {
+  margin-top: auto;
+}
+
+/* ---- More sheet items -------------------------------------------------- */
+.more {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.more__item {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  min-height: var(--tap-target);
+  padding: 0 0.5rem;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-text);
+  cursor: pointer;
+  text-align: left;
+  border-radius: var(--radius-sm);
+}
+.more__item:active {
+  background: var(--color-surface-alt);
+}
+.more__item--danger {
+  color: var(--danger);
+}
+
+/* ---- Desktop layout ---------------------------------------------------- */
+@media (min-width: 1024px) {
+  :host {
+    --sidebar-w: 248px;
+  }
+  .shell {
+    display: grid;
+    grid-template-columns: var(--sidebar-w) 1fr;
+    grid-template-areas: 'sidebar main';
+  }
+  .shell__sidebar {
+    grid-area: sidebar;
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+    position: sticky;
+    top: 0;
+    border-right: 1px solid var(--color-border);
+    background: var(--color-surface);
+  }
+  .shell__main {
+    grid-area: main;
+  }
+  .shell__header,
+  .botnav {
+    display: none;
+  }
+  .shell__content {
+    padding: 1.75rem 2rem 3rem;
+  }
+}
