@@ -7,10 +7,11 @@ build/
 frontend/.angular/
 *.tsbuildinfo
 
-# Environment — never commit real secrets
+# Environment — never commit real secrets, but keep the *.example templates
 .env
 .env.*
 !.env.example
+!.env.*.example
 
 # Uploaded files (local dev file storage) — keep the folder, ignore its contents
 backend/uploads/*

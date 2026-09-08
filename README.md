@@ -211,16 +211,25 @@ npm run format       # prettier --write
   (all in `.gitignore`).
 - Keep the docs in `docs/` in sync with the implementation.
 
-## 15. Future deployment (not done yet)
+## 15. Deployment
 
-| Piece    | Target                                        |
-| -------- | --------------------------------------------- |
-| Frontend | **Firebase Hosting** (static `frontend/dist`) |
-| Backend  | any Node-compatible host (Render/Railway/Fly/VM) — Firebase Hosting cannot run Express |
-| Database | **MongoDB Atlas**                             |
+| Piece    | Target                                        | In the repo |
+| -------- | --------------------------------------------- | ----------- |
+| Frontend | **Firebase Hosting** (static)                 | `firebase.json`, `.firebaserc`, `.github/workflows/deploy.yml` |
+| Backend  | **Render** (Docker web service) — Firebase Hosting cannot run Express | `render.yaml`, `backend/Dockerfile` |
+| Database | **MongoDB Atlas** (free M0)                   | — (created in your Atlas account) |
 
-Production configuration is entirely environment-based; localhost is never
-assumed. Details and a checklist in [docs/deployment.md](docs/deployment.md).
+The app and API are different origins, so auth cookies are `SameSite=None; Secure`
+and CORS is locked to the Firebase origin. Production config is entirely
+environment-based; localhost is never assumed.
+
+**Full step-by-step (Atlas → Render → Firebase → GitHub Actions):
+[docs/deployment.md](docs/deployment.md).**
+
+CI (`.github/workflows/ci.yml`) runs lint + typecheck + tests + build on every
+push/PR. `.github/workflows/deploy.yml` builds the app against the production API
+URL and deploys to Firebase Hosting on push to `main` (needs three repo secrets —
+see the deployment doc).
 
 ## 16. Manual steps that still require you
 

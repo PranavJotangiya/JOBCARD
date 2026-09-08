@@ -1,0 +1,54 @@
+# Render Blueprint — deploys the JOBCARD API as a Docker web service.
+# Use: Render dashboard -> New -> Blueprint -> pick this repo.
+# You will be prompted for the `sync: false` values (MONGODB_URI, CLIENT_URL).
+# Docs: https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: jobcard-api
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free # free web services sleep after ~15 min idle (first request is slow)
+    region: singapore # pick the one closest to you / your Atlas cluster
+    healthCheckPath: /api/v1/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: API_PREFIX
+        value: /api/v1
+      # --- set these in the Render dashboard (kept out of the repo) ---
+      - key: MONGODB_URI
+        sync: false # mongodb+srv://<user>:<pass>@<cluster>/jobcard?retryWrites=true&w=majority
+      - key: MONGODB_DB_NAME
+        value: jobcard
+      - key: CLIENT_URL
+        sync: false # e.g. https://<your-project>.web.app,https://<your-project>.firebaseapp.com
+      # --- Render generates a strong secret ---
+      - key: AUTH_SECRET
+        generateValue: true
+      # --- cross-site cookies (Firebase Hosting <-> Render are different origins) ---
+      - key: COOKIE_SECURE
+        value: "true"
+      - key: COOKIE_SAMESITE
+        value: none
+      - key: ACCESS_TOKEN_TTL
+        value: 15m
+      - key: REFRESH_TOKEN_TTL
+        value: 7d
+      - key: BCRYPT_SALT_ROUNDS
+        value: "12"
+      - key: STORAGE_DRIVER
+        value: local
+      - key: MAX_UPLOAD_MB
+        value: "8"
+      - key: LOG_LEVEL
+        value: info
+      - key: RATE_LIMIT_MAX
+        value: "300"
+    # Pattern images are ephemeral on the free plan (disk wiped on redeploy).
+    # Uncomment for a persistent disk (paid), or add an S3 storage driver.
+    # disk:
+    #   name: jobcard-uploads
+    #   mountPath: /app/uploads
+    #   sizeGB: 1

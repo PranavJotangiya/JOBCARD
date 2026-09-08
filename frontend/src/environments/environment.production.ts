@@ -1,14 +1,14 @@
 /**
  * Production environment.
  *
- * `apiBaseUrl` MUST be set at build/deploy time to the real backend origin
- * (e.g. https://api.jobcard.example.com/api/v1). It defaults to a same-origin
- * relative path so a misconfigured deploy fails loudly instead of silently
- * talking to localhost.
+ * `apiBaseUrl` is the FULL origin of the deployed API (the backend runs on
+ * Render — a different origin than Firebase Hosting). CI overwrites this line
+ * from the `API_BASE_URL` secret via `frontend/scripts/set-api-url.mjs` right
+ * before `ng build`; the value below is only the committed default.
  */
 export const environment = {
   production: true,
-  apiBaseUrl: '/api/v1',
+  apiBaseUrl: 'https://jobcard-api.onrender.com/api/v1',
   appName: 'JOBCARD',
   storagePrefix: 'jobcard.',
   defaultPageSize: 20,

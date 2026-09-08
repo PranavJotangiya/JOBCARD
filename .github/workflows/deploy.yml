@@ -1,0 +1,53 @@
+name: Deploy frontend (Firebase Hosting)
+
+# Builds the Angular app pointed at the production API and deploys it to
+# Firebase Hosting on every push to main.
+#
+# Required repository secrets (Settings -> Secrets and variables -> Actions):
+#   FIREBASE_SERVICE_ACCOUNT  - JSON key of a service account with the
+#                               "Firebase Hosting Admin" role on the project
+#   FIREBASE_PROJECT_ID       - your Firebase project id
+#   API_BASE_URL              - full API origin, e.g.
+#                               https://jobcard-api.onrender.com/api/v1
+#
+# The backend (Render) deploys itself from render.yaml + its own auto-deploy.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-frontend
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Point the build at the production API
+        env:
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}
+        run: node frontend/scripts/set-api-url.mjs
+
+      - name: Build frontend (production)
+        run: npm run build:frontend
+
+      - name: Deploy to Firebase Hosting (live channel)
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          projectId: ${{ secrets.FIREBASE_PROJECT_ID }}
+          channelId: live
+          entryPoint: .
